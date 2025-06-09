@@ -1,6 +1,7 @@
-from typing import List, Optional, Dict
+import pickle
+from typing import List, Optional, Dict, Type # Make sure Type is imported
 from .core_types import Program # Relative import
-from .database_abc import BaseProgramDatabase # Relative import
+from .database_abc import BaseProgramDatabase, DB # Make sure DB is imported
 
 class SimpleProgramDatabase(BaseProgramDatabase):
     def __init__(self, population_size: int = 10):
@@ -46,5 +47,26 @@ class SimpleProgramDatabase(BaseProgramDatabase):
         return candidates[:num_programs]
 
     def __len__(self): return len(self.programs)
+
+    def save_checkpoint(self, filepath: str) -> None:
+        data_to_save = {
+            'programs': self.programs,
+            'population_size': self.population_size,
+        }
+        with open(filepath, 'wb') as f:
+            pickle.dump(data_to_save, f)
+        print(f"SimpleProgramDatabase checkpoint saved to {filepath}")
+
+    @classmethod
+    def load_checkpoint(cls: Type[DB], filepath: str) -> DB:
+        with open(filepath, 'rb') as f:
+            loaded_data = pickle.load(f)
+
+        instance = cls(population_size=loaded_data['population_size'])
+
+        instance.programs = loaded_data['programs']
+
+        print(f"SimpleProgramDatabase checkpoint loaded from {filepath}")
+        return instance
 
 print("alpha_evolve_framework/simple_program_database.py written")

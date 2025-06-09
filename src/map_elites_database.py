@@ -1,7 +1,8 @@
+import pickle
 import numpy as np # Ensure numpy is imported
-from typing import List, Optional, Dict, Tuple, Any
+from typing import List, Optional, Dict, Tuple, Any, Type # Make sure Type is imported
 from .core_types import Program # Relative import
-from .database_abc import BaseProgramDatabase # Relative import
+from .database_abc import BaseProgramDatabase, DB # Relative import, Make sure DB is imported
 
 class MAPElitesDatabase(BaseProgramDatabase):
     def __init__(self, feature_definitions: List[Dict[str, Any]], context_program_capacity: int = 10):
@@ -86,5 +87,36 @@ class MAPElitesDatabase(BaseProgramDatabase):
         return max(all_contenders, key=lambda p: p.scores.get('main_score', -float('inf')), default=None)
 
     def __len__(self): return len(self.map_elites)
+
+    def save_checkpoint(self, filepath: str) -> None:
+        data_to_save = {
+            'feature_definitions': self.feature_definitions,
+            'context_program_capacity': self.context_program_capacity,
+            'map_elites': self.map_elites,
+            'recent_good_programs': self.recent_good_programs,
+            'bin_edges': self.bin_edges,
+            'num_bins_per_dim': self.num_bins_per_dim
+        }
+        with open(filepath, 'wb') as f:
+            pickle.dump(data_to_save, f)
+        print(f"MAPElitesDatabase checkpoint saved to {filepath}")
+
+    @classmethod
+    def load_checkpoint(cls: Type[DB], filepath: str) -> DB:
+        with open(filepath, 'rb') as f:
+            loaded_data = pickle.load(f)
+
+        instance = cls(
+            feature_definitions=loaded_data['feature_definitions'],
+            context_program_capacity=loaded_data['context_program_capacity']
+        )
+
+        instance.map_elites = loaded_data['map_elites']
+        instance.recent_good_programs = loaded_data['recent_good_programs']
+        instance.bin_edges = loaded_data['bin_edges']
+        instance.num_bins_per_dim = loaded_data['num_bins_per_dim']
+
+        print(f"MAPElitesDatabase checkpoint loaded from {filepath}")
+        return instance
 
 print("alpha_evolve_framework/map_elites_database.py written")

@@ -9,13 +9,32 @@ description = "A framework for evolutionary algorithms and AI optimization"
 authors = [
     {name = "Your Name", email = "your@email.com"}
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
+dependencies = [
+    "litellm",
+    "matplotlib",
+    "numpy",
+    "pillow",
+    "langgraph>=0.2.0",
+    "langsmith>=0.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "black",
+    "isort",
+    "mypy",
+    "jupyter",
+    "ipykernel",
+]
 
 [project.scripts]
-evostar = "src.orchestrator:main"
+evostar = "alpha_evolve_framework.orchestrator:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src"]
+packages = ["alpha_evolve_framework"]
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -30,6 +49,8 @@ dependencies = [
     "matplotlib",
     "numpy",
     "pillow",
+    "langgraph>=0.2.0",
+    "langsmith>=0.1.0",
 ]
 
 [tool.hatch.envs.type-check]

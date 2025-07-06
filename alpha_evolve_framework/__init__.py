@@ -20,20 +20,42 @@ from .llm_block_evolver import LLMBlockEvolver
 # Other components
 from .llm_manager import LLMManager
 from .prompt_engine import PromptEngine
-from .orchestrator import MainLoopOrchestrator
 from .llm_judge import LLMJudge
+
+# Fluent API
+from .fluent_api import EvoAgent
+
+# Backend implementations
+from .backends import EvolutionBackend, LocalPythonBackend, LangGraphBackend
 
 __all__ = [
     # Core types
-    'Program', 'EvolveBlock', 'LLMSettings', 'StageOutput',
+    "Program",
+    "EvolveBlock",
+    "LLMSettings",
+    "StageOutput",
     # Main classes
-    'Codebase', 'RunConfiguration', 'logger',
+    "Codebase",
+    "RunConfiguration",
+    "logger",
     # Database
-    'BaseProgramDatabase', 'SimpleProgramDatabase', 'MAPElitesDatabase',
+    "BaseProgramDatabase",
+    "SimpleProgramDatabase",
+    "MAPElitesDatabase",
     # Evaluator
-    'BaseEvaluator', 'FunctionalEvaluator',
+    "BaseEvaluator",
+    "FunctionalEvaluator",
     # Optimizer
-    'BaseOptimizer', 'LLMBlockEvolver',
+    "BaseOptimizer",
+    "LLMBlockEvolver",
     # Other
-    'LLMManager', 'PromptEngine', 'MainLoopOrchestrator', 'LLMJudge'
+    "LLMManager",
+    "PromptEngine",
+    "LLMJudge",
+    # Fluent API
+    "EvoAgent",
+    # Backends
+    "EvolutionBackend",
+    "LocalPythonBackend",
+    "LangGraphBackend",
 ]

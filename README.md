@@ -1,6 +1,6 @@
 # EvoStar
 
-A Python-based framework for evolutionary algorithms and AI optimization.
+A Python-based framework for evolutionary algorithms for code optimization. This is outcome of my personal play with alpha evolve and some borrowed code/ideas from the openevolve (https://github.com/codelion/openevolve) repo.
 
 ## Project Structure
 

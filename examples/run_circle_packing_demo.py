@@ -34,8 +34,14 @@ from examples.circle_packing.problem_functions import (
 )
 
 # Configuration
-GEMINI_API_KEY = "***REMOVED***"
-MODEL_NAME = "gemini-2.0-flash"
+import os
+
+# Read API key from environment variable for security
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("Please set the GEMINI_API_KEY environment variable")
+
+MODEL_NAME = "gemini/gemini-1.5-flash"
 
 # Evolution Configuration
 N_CIRCLES = 26

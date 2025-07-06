@@ -136,9 +136,14 @@ dmypy.json
 .DS_Store
 Thumbs.db
 
-# Local reference notebooks (not to be committed)
+# Local reference notebooks and files with API keys (not to be committed)
 fix_alpha_evolve_island_w_staged_output.ipynb
+**/notebooks_with_keys.ipynb
 
 # API keys and secrets
 *.key
 .secrets
+.env
+.env.local
+.env.production
+.env.staging

@@ -17,7 +17,10 @@ def test_google_ai_studio():
     logger = setup_logger()
     logger.info("Testing Google AI Studio integration...")
     
-    api_key = "***REMOVED***"
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        logger.error("Please set the GEMINI_API_KEY environment variable")
+        return False, None
     
     # Test different model name formats for Google AI Studio
     model_formats = [

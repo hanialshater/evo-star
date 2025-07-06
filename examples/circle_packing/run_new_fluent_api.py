@@ -5,6 +5,7 @@ including the LLM Judge, for the circle packing problem.
 """
 import sys
 import copy
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -179,9 +180,11 @@ def run_new_evolution(api_key: str):
 
 if __name__ == "__main__":
     try:
-        # Replace with your actual API key
-        GEMINI_API_KEY = "***REMOVED***"
-        print("GEMINI_API_KEY loaded successfully.")
+        # Read API key from environment variable for security
+        GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+        if not GEMINI_API_KEY:
+            raise ValueError("Please set the GEMINI_API_KEY environment variable")
+        print("GEMINI_API_KEY loaded successfully from environment.")
         run_new_evolution(api_key=GEMINI_API_KEY)
     except Exception as e:
         print(f"An unexpected error occurred: {e}")

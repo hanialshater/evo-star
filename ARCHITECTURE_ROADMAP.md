@@ -64,7 +64,87 @@ class SWEReXEvaluator(FunctionalEvaluator):
 - Each stage becomes a LangGraph node with checkpointing
 - Islands run as parallel branches in the graph
 
-### Phase 3: Enhanced Fluent API Abstractions
+### Phase 3: Coding Agent Architecture
+**Goal**: Replace simple LLMBlockEvolver with sophisticated coding agents
+
+#### Current Limitations
+- **LLMBlockEvolver**: Simple code block generation without context
+- **No Tool Usage**: Cannot use debuggers, profilers, testing frameworks
+- **Limited Refinement**: Single-shot generation without iterative improvement
+- **No Codebase Understanding**: Works on isolated functions, not full projects
+
+#### Coding Agent Benefits
+- **Tool Integration**: Native support for python_repl, bash, editor, git, debuggers
+- **Iterative Refinement**: Multi-step problem-solving with feedback loops
+- **Codebase Awareness**: Can work with entire projects and dependencies
+- **Interactive Development**: Can debug, test, and refine solutions systematically
+
+#### Agent Integration Architecture
+```python
+# Current: Simple block evolution
+class LLMBlockEvolver:
+    def evolve(self, code):
+        return self.llm.generate(f"Improve this code: {code}")
+
+# New: Sophisticated agent evolution
+class CodingAgentEvolver:
+    def __init__(self, agent_type="swe-agent"):
+        self.agent = self._create_agent(agent_type)
+    
+    async def evolve(self, code, context):
+        task = f"Improve this code: {code}"
+        result = await self.agent.solve(
+            task=task,
+            context=context,
+            max_iterations=20,
+            tools=["python_repl", "bash", "editor", "git"]
+        )
+        return result.solution
+```
+
+#### Two-Tier Evolution System
+```python
+# Population-level exploration (broad search)
+islands = [
+    Island(population_size=50, evolver=LLMBlockEvolver()),
+    Island(population_size=50, evolver=LLMBlockEvolver()),
+    Island(population_size=50, evolver=LLMBlockEvolver())
+]
+
+# Individual-level refinement (deep improvement)
+coding_agents = [
+    CodingAgentEvolver(agent_type="swe-agent"),
+    CodingAgentEvolver(agent_type="aider"),
+    CodingAgentEvolver(agent_type="custom")
+]
+
+# Combined workflow
+for generation in range(max_generations):
+    # Parallel island evolution
+    for island in islands:
+        island.evolve_parallel()
+    
+    # Select promising candidates
+    promising = select_top_candidates(islands, top_k=10)
+    
+    # Deep refinement with agents
+    refined = []
+    for candidate in promising:
+        agent = select_best_agent(candidate)
+        improved = await agent.evolve(candidate, context)
+        refined.append(improved)
+    
+    # Feed back to population
+    for island in islands:
+        island.inject_candidates(refined)
+```
+
+#### Agent-Specific Implementations
+- **SWE-Agent**: Sandboxed environment, systematic problem-solving
+- **Aider**: Git-based code improvement, commit history tracking
+- **Custom Agents**: Domain-specific tools and workflows
+
+### Phase 4: Enhanced Fluent API Abstractions
 **Goal**: More expressive evolutionary algorithm patterns
 
 ## Enhanced Fluent API Design
@@ -153,6 +233,88 @@ agent.exploration_to_optimization(
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
+### Enhanced Architecture with Parallel Evolution and Agent Integration
+```
+                       ┌─────────────────────────────────────────────────┐
+                       │              Fluent API                         │
+                       │ • Resource Budgeting  • Strategy Selection      │
+                       │ • Phase Management    • Agent Configuration     │
+                       └─────────────────────────┬───────────────────────┘
+                                                 │
+                                                 ▼
+                       ┌─────────────────────────────────────────────────┐
+                       │            LangGraph Compiler                   │
+                       │ • Parallel Branch Generation                    │
+                       │ • Agent Workflow Integration                    │
+                       │ • Checkpoint Strategy Planning                  │
+                       └─────────────────────────┬───────────────────────┘
+                                                 │
+                                                 ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                              LangGraph Workflow                                       │
+│                                                                                        │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                   │
+│  │    Island 1     │    │    Island 2     │    │    Island N     │                   │
+│  │  Population     │    │  Population     │    │  Population     │                   │
+│  │  Evolution      │    │  Evolution      │    │  Evolution      │                   │
+│  │  (Parallel)     │    │  (Parallel)     │    │  (Parallel)     │                   │
+│  └─────┬───────────┘    └─────┬───────────┘    └─────┬───────────┘                   │
+│        │                      │                      │                               │
+│        └──────────────────────┼──────────────────────┘                               │
+│                               │                                                      │
+│                               ▼                                                      │
+│                    ┌─────────────────────┐                                          │
+│                    │  Candidate Selection │                                          │
+│                    │  (Top K Promising)   │                                          │
+│                    └─────────┬───────────┘                                          │
+│                              │                                                      │
+│                              ▼                                                      │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐                   │
+│  │   SWE-Agent     │    │     Aider       │    │  Custom Agent   │                   │
+│  │  Deep Refine    │    │  Git-based      │    │  Domain-specific │                   │
+│  │  (Parallel)     │    │  Improvement    │    │  Optimization   │                   │
+│  └─────┬───────────┘    └─────┬───────────┘    └─────┬───────────┘                   │
+│        │                      │                      │                               │
+│        └──────────────────────┼──────────────────────┘                               │
+│                               │                                                      │
+│                               ▼                                                      │
+│                    ┌─────────────────────┐                                          │
+│                    │  Result Integration  │                                          │
+│                    │  Back to Population  │                                          │
+│                    └─────────────────────┘                                          │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+                                                 │
+                                                 ▼
+                       ┌─────────────────────────────────────────────────┐
+                       │                 SWE-ReX                         │
+                       │ • Sandboxed Execution                           │
+                       │ • Multi-deployment Support                      │
+                       │ • Interactive Tool Access                       │
+                       │ • Scalable Cloud Infrastructure                 │
+                       └─────────────────────────────────────────────────┘
+```
+
+### Parallel Evolution Flow
+```
+Generation N:
+  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+  │   Island 1  │    │   Island 2  │    │   Island 3  │
+  │   50 pop    │    │   50 pop    │    │   50 pop    │
+  │   evolving  │    │   evolving  │    │   evolving  │
+  │  (parallel) │    │  (parallel) │    │  (parallel) │
+  └─────────────┘    └─────────────┘    └─────────────┘
+          │                  │                  │
+          └─────────┬────────┴────────┬─────────┘
+                    │                 │
+                    ▼                 ▼
+              ┌─────────────────────────────┐
+              │    Migration & Selection    │
+              │    Top 10 candidates       │
+              └─────────────────────────────┘
+                            │
+                            ▼
+    ┌─────────────┐    ┌─────────
+
 ### Execution Flow
 1. **Fluent API** defines high-level evolutionary strategy
 2. **Compiler** translates to LangGraph workflow definition
@@ -169,25 +331,35 @@ agent.exploration_to_optimization(
 - [ ] Add Docker deployment support
 - [ ] Test parallel island execution
 
-### Phase 2: LangGraph Integration (Weeks 3-4)
-- [ ] Design LangGraph workflow schema
+### Phase 2: LangGraph Parallel Evolution (Weeks 3-4)
+- [ ] Design LangGraph workflow schema with parallel branches
+- [ ] Implement parallel island execution using LangGraph
+- [ ] Add migration synchronization points between islands
 - [ ] Implement fluent API → LangGraph compiler
-- [ ] Add checkpointing support
-- [ ] Integrate LangSmith for debugging
-- [ ] Test durable execution scenarios
+- [ ] Add checkpointing support for parallel workflows
+- [ ] Test durable parallel execution scenarios
 
-### Phase 3: Enhanced Abstractions (Weeks 5-6)
+### Phase 3: Coding Agent Integration (Weeks 5-6)
+- [ ] Create `CodingAgentEvolver` interface
+- [ ] Integrate SWE-agent for individual candidate refinement
+- [ ] Add Aider wrapper for git-based code improvements
+- [ ] Implement two-tier evolution system (population + individual)
+- [ ] Add intelligent candidate selection for deep refinement
+- [ ] Create feedback loops from individual refinement to population
+
+### Phase 4: Enhanced Abstractions (Weeks 7-8)
 - [ ] Implement resource budgeting system
-- [ ] Add Hyperband search pattern
+- [ ] Add Hyperband search pattern with parallel execution
 - [ ] Create exploration/optimization phase transitions
 - [ ] Implement component co-evolution
 - [ ] Add multi-objective optimization support
+- [ ] Integrate coding agents with advanced search patterns
 
-### Phase 4: Production Features (Weeks 7-8)
-- [ ] Modal/AWS deployment support
-- [ ] Performance optimization
-- [ ] Comprehensive testing
-- [ ] Documentation and examples
+### Phase 5: Production Features (Weeks 9-10)
+- [ ] Modal/AWS deployment support for parallel execution
+- [ ] Performance optimization for agent-based evolution
+- [ ] Comprehensive testing of parallel + agent systems
+- [ ] Documentation and examples for new capabilities
 - [ ] Migration guide from current API
 
 ## Technical Considerations

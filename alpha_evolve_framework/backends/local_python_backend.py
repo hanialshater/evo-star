@@ -9,15 +9,15 @@ from typing import Dict, List, Optional, Any, Callable
 from .base_backend import EvolutionBackend
 from ..core_types import Program, StageOutput, LLMSettings
 from ..config import RunConfiguration
-from ..codebase import Codebase
-from ..functional_evaluator import FunctionalEvaluator
-from ..prompt_engine import PromptEngine
-from ..llm_manager import LLMManager
-from ..llm_judge import LLMJudge
-from ..llm_block_evolver import LLMBlockEvolver
+from ..coding_agents.llm_block_evolver.codebase import Codebase
+from ..evaluators.functional_evaluator import FunctionalEvaluator
+from ..llm.prompt_engine import PromptEngine
+from ..llm.llm_manager import LLMManager
+from ..llm.llm_judge import LLMJudge
+from ..coding_agents.llm_block_evolver import LLMBlockEvolver
 from .local_python_orchestrator import MainLoopOrchestrator
-from ..map_elites_database import MAPElitesDatabase
-from ..simple_program_database import SimpleProgramDatabase
+from ..databases.map_elites_database import MAPElitesDatabase
+from ..databases.simple_program_database import SimpleProgramDatabase
 
 logger = logging.getLogger(__name__)
 

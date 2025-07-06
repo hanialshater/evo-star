@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Optional, Callable, Tuple
 
 from .backends import EvolutionBackend, LocalPythonBackend, LangGraphBackend
 from .core_types import Program, LLMSettings, StageOutput
-from .logging_utils import setup_logger
+from .utils.logging_utils import setup_logger
 
 
 class EvoAgent:

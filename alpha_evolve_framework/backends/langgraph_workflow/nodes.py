@@ -10,15 +10,15 @@ import logging
 
 from .state import EvolutionState, update_state_with_evaluation
 from ...core_types import Program
-from ...codebase import Codebase
-from ...llm_manager import LLMManager
-from ...prompt_engine import PromptEngine
-from ...functional_evaluator import FunctionalEvaluator
-from ...simple_program_database import SimpleProgramDatabase
-from ...map_elites_database import MAPElitesDatabase
-from ...llm_block_evolver import LLMBlockEvolver
-from ...optimizer_abc import BaseOptimizer
-from ...candidate_evaluator import CandidateEvaluator
+from ...coding_agents.llm_block_evolver.codebase import Codebase
+from ...llm.llm_manager import LLMManager
+from ...llm.prompt_engine import PromptEngine
+from ...evaluators.functional_evaluator import FunctionalEvaluator
+from ...databases.simple_program_database import SimpleProgramDatabase
+from ...databases.map_elites_database import MAPElitesDatabase
+from ...coding_agents.llm_block_evolver.llm_block_evolver import LLMBlockEvolver
+from ...optimization.optimizer_abc import BaseOptimizer
+from ...evaluators.candidate_evaluator import CandidateEvaluator
 
 logger = logging.getLogger(__name__)
 

@@ -2,6 +2,7 @@
 import logging
 import sys
 
+
 def setup_logger(level=logging.INFO):
     """
     Configures and returns a root logger for the application.
@@ -17,8 +18,8 @@ def setup_logger(level=logging.INFO):
     handler.setLevel(level)
 
     formatter = logging.Formatter(
-        '[%(asctime)s] [%(levelname)s] [%(name)s] - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
+        "[%(asctime)s] [%(levelname)s] [%(name)s] - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
@@ -27,8 +28,11 @@ def setup_logger(level=logging.INFO):
     logging.getLogger("google.api_core").setLevel(logging.WARNING)
     logging.getLogger("google.generativeai").setLevel(logging.WARNING)
 
-    logger.info(f"Logger '{logger.name}' configured with level {logging.getLevelName(level)}.")
+    logger.info(
+        f"Logger '{logger.name}' configured with level {logging.getLevelName(level)}."
+    )
     return logger
+
 
 # Default logger instance to be imported by other modules
 logger = logging.getLogger("EvoAgent")

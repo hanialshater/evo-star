@@ -50,9 +50,16 @@ def test_local_python_backend():
     logger.info("=== Testing LocalPython Backend ===")
 
     try:
-        agent = EvoAgent(
-            api_key="AIzaSyBdiqeV2FSL63Y_rlazDyQEpORimWTt5-M", log_level=logging.INFO
-        )
+        from alpha_evolve_framework.utils import get_gemini_api_key
+
+        try:
+            api_key = get_gemini_api_key()
+        except ValueError as e:
+            print(f"Error: {e}")
+            print("Please set your GEMINI_API_KEY in the .env file")
+            return "FAILED"
+
+        agent = EvoAgent(api_key=api_key, log_level=logging.DEBUG)
 
         result = (
             agent.define_problem(
@@ -86,9 +93,16 @@ def test_langgraph_backend():
     logger.info("=== Testing LangGraph Backend ===")
 
     try:
-        agent = EvoAgent(
-            api_key="AIzaSyBdiqeV2FSL63Y_rlazDyQEpORimWTt5-M", log_level=logging.INFO
-        )
+        from alpha_evolve_framework.utils import get_gemini_api_key
+
+        try:
+            api_key = get_gemini_api_key()
+        except ValueError as e:
+            print(f"Error: {e}")
+            print("Please set your GEMINI_API_KEY in the .env file")
+            return "FAILED"
+
+        agent = EvoAgent(api_key=api_key, log_level=logging.DEBUG)
 
         result = (
             agent.define_problem(

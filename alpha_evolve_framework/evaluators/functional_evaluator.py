@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Tuple, Dict, Any, Callable
 from .evaluator_abc import BaseEvaluator
-from .logging_utils import logger
+from ..utils.logging_utils import logger
 import multiprocessing as mp
 
 

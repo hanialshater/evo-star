@@ -7,10 +7,10 @@ import copy
 import logging
 from typing import Dict, List, Any, Optional, Callable
 
-from .core_types import Program
-from .codebase import Codebase
+from ..core_types import Program
+from ..coding_agents.llm_block_evolver.codebase import Codebase
 from .evaluator_abc import BaseEvaluator
-from .llm_judge import LLMJudge
+from ..llm.llm_judge import LLMJudge
 
 logger = logging.getLogger(__name__)
 

@@ -10,11 +10,16 @@ from typing import Dict, Any, Tuple
 # Add the current directory to Python path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from alpha_evolve_framework.langgraph_backend.poc_workflow import LangGraphEvoAgent, run_simple_poc_evolution
+from alpha_evolve_framework.langgraph_backend.poc_workflow import (
+    LangGraphEvoAgent,
+    run_simple_poc_evolution,
+)
 from alpha_evolve_framework.core_types import LLMSettings
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -33,7 +38,9 @@ def main():
 '''
 
 
-def simple_evaluator(program_id: str, full_code: str, generation: int, **kwargs) -> Tuple[Dict[str, float], Dict[str, Any]]:
+def simple_evaluator(
+    program_id: str, full_code: str, generation: int, **kwargs
+) -> Tuple[Dict[str, float], Dict[str, Any]]:
     """
     Simple evaluator that runs the code and scores it.
     We want to find a function that returns a high value.
@@ -41,34 +48,34 @@ def simple_evaluator(program_id: str, full_code: str, generation: int, **kwargs)
     try:
         # Create a local namespace for execution
         namespace = {}
-        
+
         # Execute the code
         exec(full_code, namespace)
-        
+
         # Call the main function
-        if 'main' in namespace:
-            result = namespace['main']()
+        if "main" in namespace:
+            result = namespace["main"]()
             score = float(result) if isinstance(result, (int, float)) else 0.0
         else:
             score = -1000.0  # Penalty for missing main function
-        
+
         return (
             {"main_score": score},
-            {"result": result if 'result' in locals() else None, "execution": "success"}
+            {
+                "result": result if "result" in locals() else None,
+                "execution": "success",
+            },
         )
-        
+
     except Exception as e:
         # Penalty for code that doesn't run
-        return (
-            {"main_score": -1000.0},
-            {"error": str(e), "execution": "failed"}
-        )
+        return ({"main_score": -1000.0}, {"error": str(e), "execution": "failed"})
 
 
 def run_poc_demo(api_key: str) -> None:
     """Run a simple POC demonstration."""
     logger.info("=== Starting LangGraph POC Demo ===")
-    
+
     try:
         # Run simple evolution
         result = run_simple_poc_evolution(
@@ -76,13 +83,13 @@ def run_poc_demo(api_key: str) -> None:
             evaluator_fn=simple_evaluator,
             api_key=api_key,
             max_generations=2,  # Keep it small for POC
-            llm_model="gemini/gemini-1.5-flash"
+            llm_model="gemini/gemini-1.5-flash",
         )
-        
+
         logger.info("=== POC Demo Results ===")
         logger.info(f"Status: {result.status}")
         logger.info(f"Message: {result.message}")
-        
+
         if result.best_program:
             best = result.best_program
             logger.info(f"Best Program ID: {best.id}")
@@ -90,11 +97,11 @@ def run_poc_demo(api_key: str) -> None:
             logger.info(f"Best Code:\n{best.code_str}")
         else:
             logger.warning("No best program found!")
-        
+
         logger.info(f"Final Population Size: {len(result.final_population)}")
-        
+
         return result
-        
+
     except Exception as e:
         logger.error(f"POC Demo failed: {e}", exc_info=True)
         return None
@@ -102,11 +109,18 @@ def run_poc_demo(api_key: str) -> None:
 
 if __name__ == "__main__":
     # Your provided API key
-    API_KEY = "AIzaSyBdiqeV2FSL63Y_rlazDyQEpORimWTt5-M"
-    
+    from alpha_evolve_framework.utils import get_gemini_api_key
+
+    try:
+        API_KEY = get_gemini_api_key()
+    except ValueError as e:
+        print(f"Error: {e}")
+        print("Please set your GEMINI_API_KEY in the .env file")
+        exit(1)
+
     logger.info("Testing LangGraph POC...")
     result = run_poc_demo(API_KEY)
-    
+
     if result:
         logger.info("POC Demo completed successfully!")
     else:

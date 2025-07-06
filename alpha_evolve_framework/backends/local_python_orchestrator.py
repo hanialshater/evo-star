@@ -4,13 +4,13 @@ import time
 from typing import List, Dict, Any, Optional, Tuple, Callable
 
 from ..core_types import Program, StageOutput
-from ..codebase import Codebase
+from ..coding_agents.llm_block_evolver.codebase import Codebase
 from ..config import RunConfiguration
-from ..optimizer_abc import BaseOptimizer
-from ..evaluator_abc import BaseEvaluator
-from ..llm_judge import LLMJudge
-from ..candidate_evaluator import CandidateEvaluator
-from ..logging_utils import logger
+from ..optimization.optimizer_abc import BaseOptimizer
+from ..evaluators.evaluator_abc import BaseEvaluator
+from ..llm.llm_judge import LLMJudge
+from ..evaluators.candidate_evaluator import CandidateEvaluator
+from ..utils.logging_utils import logger
 
 
 class MainLoopOrchestrator:

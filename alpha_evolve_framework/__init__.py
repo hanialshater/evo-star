@@ -1,26 +1,25 @@
 # Main framework imports
 from .core_types import Program, EvolveBlock, LLMSettings, StageOutput
-from .codebase import Codebase
 from .config import RunConfiguration
-from .logging_utils import logger
 
 # Database implementations
-from .database_abc import BaseProgramDatabase
-from .simple_program_database import SimpleProgramDatabase
-from .map_elites_database import MAPElitesDatabase
+from .databases import BaseProgramDatabase, SimpleProgramDatabase, MAPElitesDatabase
 
 # Evaluator implementations
-from .evaluator_abc import BaseEvaluator
-from .functional_evaluator import FunctionalEvaluator
+from .evaluators import BaseEvaluator, FunctionalEvaluator, CandidateEvaluator
 
 # Optimizer implementations
-from .optimizer_abc import BaseOptimizer
-from .llm_block_evolver import LLMBlockEvolver
+from .optimization import BaseOptimizer
 
-# Other components
-from .llm_manager import LLMManager
-from .prompt_engine import PromptEngine
-from .llm_judge import LLMJudge
+# Coding agents
+from .coding_agents import BaseAgent
+from .coding_agents.llm_block_evolver import LLMBlockEvolver
+
+# LLM components
+from .llm import LLMManager, PromptEngine, LLMJudge
+
+# Utilities
+from .utils import setup_logging
 
 # Fluent API
 from .fluent_api import EvoAgent
@@ -35,9 +34,7 @@ __all__ = [
     "LLMSettings",
     "StageOutput",
     # Main classes
-    "Codebase",
     "RunConfiguration",
-    "logger",
     # Database
     "BaseProgramDatabase",
     "SimpleProgramDatabase",
@@ -45,13 +42,18 @@ __all__ = [
     # Evaluator
     "BaseEvaluator",
     "FunctionalEvaluator",
+    "CandidateEvaluator",
     # Optimizer
     "BaseOptimizer",
+    # Coding agents
+    "BaseAgent",
     "LLMBlockEvolver",
-    # Other
+    # LLM components
     "LLMManager",
     "PromptEngine",
     "LLMJudge",
+    # Utilities
+    "setup_logging",
     # Fluent API
     "EvoAgent",
     # Backends

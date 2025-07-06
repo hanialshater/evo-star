@@ -115,5 +115,11 @@ def run_demo(api_key: str) -> None:
 
 if __name__ == "__main__":
     # Example usage
-    API_KEY = "AIzaSyBdiqeV2FSL63Y_rlazDyQEpORimWTt5-M"  # Your provided key
-    run_demo(API_KEY)
+    from ...utils import get_gemini_api_key
+
+    try:
+        API_KEY = get_gemini_api_key()
+        run_demo(API_KEY)
+    except ValueError as e:
+        print(f"Error: {e}")
+        print("Please set your GEMINI_API_KEY in the .env file")

@@ -46,5 +46,3 @@ class SimpleProgramDatabase(BaseProgramDatabase):
         return candidates[:num_programs]
 
     def __len__(self): return len(self.programs)
-
-print("alpha_evolve_framework/simple_program_database.py written")

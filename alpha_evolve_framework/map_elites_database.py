@@ -86,5 +86,3 @@ class MAPElitesDatabase(BaseProgramDatabase):
         return max(all_contenders, key=lambda p: p.scores.get('main_score', -float('inf')), default=None)
 
     def __len__(self): return len(self.map_elites)
-
-print("alpha_evolve_framework/map_elites_database.py written")

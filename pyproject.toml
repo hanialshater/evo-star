@@ -24,6 +24,12 @@ dependencies = [
     "black",
     "isort",
     "mypy",
+    "jupyter",
+    "ipykernel",
+    "litellm",
+    "matplotlib",
+    "numpy",
+    "pillow",
 ]
 
 [tool.hatch.envs.type-check]

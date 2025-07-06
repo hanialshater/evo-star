@@ -3,8 +3,9 @@ from typing import Dict, List, Optional
 from .core_types import EvolveBlock # Relative import
 
 class Codebase:
-    EVOLVE_BLOCK_START_PATTERN_LINE = r"^\s*#\s*EVOLVE-BLOCK-START\s*(?P<name>[a-zA-Z0-9_.-]+)\s*$"
-    EVOLVE_BLOCK_END_PATTERN_LINE = r"^\s*#\s*EVOLVE-BLOCK-END\s*$"
+    # Updated patterns to support both Python and HTML evolve block markers
+    EVOLVE_BLOCK_START_PATTERN_LINE = r"^\s*(?:#|\<\!\-\-)\s*EVOLVE-BLOCK-START\s*(?P<name>[a-zA-Z0-9_.-]+)\s*(?:-->)?\s*$"
+    EVOLVE_BLOCK_END_PATTERN_LINE = r"^\s*(?:#|\<\!\-\-)\s*EVOLVE-BLOCK-END\s*(?:-->)?\s*$"
 
     def __init__(self, initial_full_code: str):
         self.original_full_code: str = initial_full_code
@@ -50,5 +51,3 @@ class Codebase:
     def reconstruct_full_code(self) -> str:
         return "".join([self.evolve_blocks[part].current_code if part in self.evolve_blocks else part for part in self.code_template_parts])
     def __repr__(self): return f"Codebase(blocks={list(self.evolve_blocks.keys())}, template_parts_count={len(self.code_template_parts)})"
-
-print("alpha_evolve_framework/codebase.py written")

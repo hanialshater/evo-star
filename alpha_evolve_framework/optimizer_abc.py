@@ -53,5 +53,3 @@ class BaseOptimizer(abc.ABC):
 
     def reset_local_generations(self):
         self.current_generation = 0
-
-print("alpha_evolve_framework/optimizer_abc.py (re)written with corrected should_terminate.")

@@ -14,6 +14,7 @@ class Program:
     timestamp: float = dataclasses.field(default_factory=time.time)
     eval_details: Dict[str, Any] = dataclasses.field(default_factory=dict)
     features: Optional[Tuple[float, ...]] = None # For MAP-Elites
+    judge_feedback: Optional[Dict[str, Any]] = dataclasses.field(default_factory=dict)
 
     def __post_init__(self):
         if not self.scores:
@@ -21,8 +22,9 @@ class Program:
 
     def __repr__(self):
         feature_str = f", features={self.features}" if self.features is not None else ""
+        judge_score_str = f", judge_score={self.scores.get('judge_score', 'N/A')}" if 'judge_score' in self.scores else ""
         return (f"Program(id='{self.id}', block='{self.block_name}', "
-                f"score={self.scores.get('main_score', -float('inf')):.4f}, gen={self.generation}{feature_str})")
+                f"score={self.scores.get('main_score', -float('inf')):.4f}{judge_score_str}, gen={self.generation}{feature_str})")
 
 @dataclasses.dataclass
 class EvolveBlock:
@@ -64,15 +66,12 @@ class EvolveBlock:
         if replace_code.startswith("="):
             print("Diff Info: replace_code started with '=', attempting to strip it.")
             replace_code = replace_code.lstrip("= \t\n\r")
-        # print(f"--- Extracted SEARCH Code (len {len(search_code)}): ---\n'{search_code[:200]}...'")
-        # print(f"--- Extracted REPLACE Code (len {len(replace_code)}): ---\n'{replace_code[:200]}...'")
         normalized_current_code = self.current_code.replace('\r\n', '\n')
         if not search_code:
             print("Diff Error: Extracted SEARCH code is empty.")
             return False
         if search_code not in normalized_current_code:
             print(f"Diff Apply Error: SEARCH code not found in current code of block '{self.name}'.")
-            # print(f"--- Normalized Current Block Code: ---\n'{normalized_current_code[:300]}...'")
             return False
         new_block_code_normalized = normalized_current_code.replace(search_code, replace_code, 1)
         if new_block_code_normalized == normalized_current_code:
@@ -94,4 +93,13 @@ class LLMSettings:
         if self.selection_weight < 0:
             raise ValueError("LLMSettings.selection_weight must be non-negative.")
 
-print("alpha_evolve_framework/core_types.py written")
+# --- NEWLY ADDED DATACLASS ---
+@dataclasses.dataclass
+class StageOutput:
+    """A standardized data structure to hold the results of a single pipeline stage."""
+    stage_name: str
+    status: str  # e.g., 'COMPLETED', 'FAILED', 'TERMINATED_EARLY'
+    message: str # A human-readable summary of the stage outcome.
+    best_program: Optional[Program]
+    final_population: List[Program] = dataclasses.field(default_factory=list)
+    artifacts: Dict[str, Any] = dataclasses.field(default_factory=dict) # For file paths, etc.

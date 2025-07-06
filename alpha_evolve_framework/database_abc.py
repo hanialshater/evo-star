@@ -23,5 +23,3 @@ class BaseProgramDatabase(abc.ABC):
 
     @abc.abstractmethod
     def __len__(self) -> int: pass # Number of elites, or population size
-
-print("alpha_evolve_framework/database_abc.py written")

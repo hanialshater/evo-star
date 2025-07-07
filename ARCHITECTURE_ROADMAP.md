@@ -355,7 +355,30 @@ Generation N:
 - [ ] Add multi-objective optimization support
 - [ ] Integrate coding agents with advanced search patterns
 
-### Phase 5: Production Features (Weeks 9-10)
+### Phase 5: Multi-Block Evolution & Evolver Parity (Weeks 9-10)
+- [ ] **Multi-Block Evolution Support**
+  - [ ] Extend `Codebase` class to support multiple evolve blocks
+  - [ ] Add block dependency tracking and execution order
+  - [ ] Implement cross-block mutation and crossover operations
+  - [ ] Support hierarchical code structure evolution
+- [ ] **Aider Multi-Block Integration**
+  - [ ] Extend `AiderEvolver` to work with multiple code blocks
+  - [ ] Add support for file-level and function-level evolution
+  - [ ] Implement Aider's git-based tracking for multi-block changes
+  - [ ] Add context-aware evolution across related code blocks
+- [ ] **Evolver Parity Analysis & Implementation**
+  - [ ] Create comprehensive feature comparison matrix (Aider vs LLMBlock)
+  - [ ] Implement missing features in both evolvers for feature parity
+  - [ ] Add standardized evaluation metrics for both evolvers
+  - [ ] Create benchmark suite to compare evolver performance
+  - [ ] Implement cross-evolver result validation and comparison
+- [ ] **Enhanced Multi-Block Capabilities**
+  - [ ] Add inter-block communication patterns
+  - [ ] Implement block-level fitness evaluation
+  - [ ] Support conditional block evolution based on dependencies
+  - [ ] Add visualization for multi-block evolution progress
+
+### Phase 6: Production Features (Weeks 11-12)
 - [ ] Modal/AWS deployment support for parallel execution
 - [ ] Performance optimization for agent-based evolution
 - [ ] Comprehensive testing of parallel + agent systems

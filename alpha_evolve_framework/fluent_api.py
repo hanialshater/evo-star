@@ -21,6 +21,8 @@ class EvoAgent:
         self._generation_logger: Optional[Callable] = None
         self._llm_judge_config: Optional[Dict[str, Any]] = None
         self._use_langgraph: bool = False
+        self._evolver_type: str = "llm_block"  # Default to LLMBlockEvolver
+        self._evolver_config: Dict[str, Any] = {}
         self.logger = setup_logger(level=log_level)
 
     def define_problem(
@@ -85,6 +87,28 @@ class EvoAgent:
         self._use_langgraph = True
         return self
 
+    def use_aider_evolver(self, model: str = "gemini-1.5-flash", **kwargs):
+        """Use AiderEvolver for code evolution instead of LLMBlockEvolver.
+
+        Args:
+            model: AI model to use with Aider (default: gemini-1.5-flash)
+            **kwargs: Additional configuration for AiderEvolver
+        """
+        self.logger.info(f"Using AiderEvolver with model: {model}")
+        self._evolver_type = "aider"
+        self._evolver_config = {"model": model, **kwargs}
+        return self
+
+    def use_llm_block_evolver(self):
+        """Use LLMBlockEvolver for code evolution (default).
+
+        This is the default evolver, so calling this method is optional.
+        """
+        self.logger.info("Using LLMBlockEvolver (default)")
+        self._evolver_type = "llm_block"
+        self._evolver_config = {}
+        return self
+
     def run(self) -> Optional[StageOutput]:
         self.logger.info("--- Starting Evolution Pipeline ---")
         last_stage_output: Optional[StageOutput] = None
@@ -107,6 +131,10 @@ class EvoAgent:
                 stage_config["feature_extractor_fn"] = self._feature_extractor_fn
             if self._feature_definitions_fn:
                 stage_config["feature_definitions"] = self._feature_definitions_fn()
+
+            # Add evolver configuration to stage config
+            stage_config["evolver_type"] = self._evolver_type
+            stage_config["evolver_config"] = self._evolver_config
 
             # Run the stage
             try:

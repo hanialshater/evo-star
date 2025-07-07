@@ -15,11 +15,59 @@ from ..llm.prompt_engine import PromptEngine
 from ..llm.llm_manager import LLMManager
 from ..llm.llm_judge import LLMJudge
 from ..coding_agents.llm_block_evolver import LLMBlockEvolver
+from ..coding_agents.aider_evolver.aider_adapter import AiderEvolverAdapter
 from .local_python_orchestrator import MainLoopOrchestrator
 from ..databases.map_elites_database import MAPElitesDatabase
 from ..databases.simple_program_database import SimpleProgramDatabase
 
 logger = logging.getLogger(__name__)
+
+
+def create_evolver(
+    evolver_type: str,
+    evolver_config: Dict[str, Any],
+    initial_codebase: Codebase,
+    llm_manager: LLMManager,
+    program_database,
+    prompt_engine: PromptEngine,
+    evaluator: FunctionalEvaluator,
+    run_config: RunConfiguration,
+    feature_definitions: Optional[Dict] = None,
+    feature_extractor_fn: Optional[Callable] = None,
+    problem_specific_feature_configs: Optional[Dict] = None,
+    island_id: int = 0,
+):
+    """Factory function to create the appropriate evolver."""
+    if evolver_type == "aider":
+        # Create AiderEvolverAdapter with appropriate configuration
+        return AiderEvolverAdapter(
+            initial_codebase=initial_codebase,
+            evaluator=evaluator,
+            program_database=program_database,
+            model=evolver_config.get("model", "gemini-1.5-flash"),
+            working_dir=evolver_config.get("working_dir", "temp_evolution"),
+            **{
+                k: v
+                for k, v in evolver_config.items()
+                if k not in ["model", "working_dir"]
+            },
+        )
+    elif evolver_type == "llm_block":
+        # Create LLMBlockEvolver (default)
+        return LLMBlockEvolver(
+            initial_codebase=initial_codebase,
+            llm_manager=llm_manager,
+            program_database=program_database,
+            prompt_engine=prompt_engine,
+            evaluator=evaluator,
+            run_config=run_config,
+            feature_definitions=feature_definitions,
+            feature_extractor_fn=feature_extractor_fn,
+            problem_specific_feature_configs=problem_specific_feature_configs,
+            island_id=island_id,
+        )
+    else:
+        raise ValueError(f"Unknown evolver type: {evolver_type}")
 
 
 class LocalPythonBackend(EvolutionBackend):
@@ -122,8 +170,13 @@ class LocalPythonBackend(EvolutionBackend):
                         )
                     )
 
-            # Create optimizer
-            optimizer = LLMBlockEvolver(
+            # Create optimizer using factory function
+            evolver_type = stage_config.get("evolver_type", "llm_block")
+            evolver_config = stage_config.get("evolver_config", {})
+
+            optimizer = create_evolver(
+                evolver_type=evolver_type,
+                evolver_config=evolver_config,
                 initial_codebase=initial_codebase,
                 llm_manager=llm_manager,
                 program_database=db,

@@ -5,7 +5,7 @@ Uses the same core components as LocalPython backend for feature parity.
 
 import copy
 import uuid
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import logging
 
 from .state import EvolutionState, update_state_with_evaluation
@@ -17,10 +17,58 @@ from ...evaluators.functional_evaluator import FunctionalEvaluator
 from ...databases.simple_program_database import SimpleProgramDatabase
 from ...databases.map_elites_database import MAPElitesDatabase
 from ...coding_agents.llm_block_evolver.llm_block_evolver import LLMBlockEvolver
+from ...coding_agents.aider_evolver.aider_adapter import AiderEvolverAdapter
 from ...optimization.optimizer_abc import BaseOptimizer
 from ...evaluators.candidate_evaluator import CandidateEvaluator
 
 logger = logging.getLogger(__name__)
+
+
+def create_evolver_langgraph(
+    evolver_type: str,
+    evolver_config: Dict[str, Any],
+    initial_codebase: Codebase,
+    llm_manager: LLMManager,
+    program_database,
+    prompt_engine: PromptEngine,
+    evaluator: FunctionalEvaluator,
+    run_config,
+    feature_definitions: Optional[Dict] = None,
+    feature_extractor_fn: Optional[Any] = None,
+    problem_specific_feature_configs: Optional[Dict] = None,
+    island_id: int = 0,
+):
+    """Factory function to create the appropriate evolver for LangGraph."""
+    if evolver_type == "aider":
+        # Create AiderEvolverAdapter with appropriate configuration
+        return AiderEvolverAdapter(
+            initial_codebase=initial_codebase,
+            evaluator=evaluator,
+            program_database=program_database,
+            model=evolver_config.get("model", "gemini-1.5-flash"),
+            working_dir=evolver_config.get("working_dir", "temp_evolution"),
+            **{
+                k: v
+                for k, v in evolver_config.items()
+                if k not in ["model", "working_dir"]
+            },
+        )
+    elif evolver_type == "llm_block":
+        # Create LLMBlockEvolver (default)
+        return LLMBlockEvolver(
+            initial_codebase=initial_codebase,
+            llm_manager=llm_manager,
+            program_database=program_database,
+            prompt_engine=prompt_engine,
+            evaluator=evaluator,
+            run_config=run_config,
+            feature_definitions=feature_definitions,
+            feature_extractor_fn=feature_extractor_fn,
+            problem_specific_feature_configs=problem_specific_feature_configs,
+            island_id=island_id,
+        )
+    else:
+        raise ValueError(f"Unknown evolver type: {evolver_type}")
 
 
 class EvolutionNodes:
@@ -89,8 +137,13 @@ class EvolutionNodes:
                 ),
             )
 
-            # Create LLMBlockEvolver optimizer (same as LocalPython backend)
-            optimizer = LLMBlockEvolver(
+            # Create optimizer using factory function
+            evolver_type = stage_config.get("evolver_type", "llm_block")
+            evolver_config = stage_config.get("evolver_config", {})
+
+            optimizer = create_evolver_langgraph(
+                evolver_type=evolver_type,
+                evolver_config=evolver_config,
                 initial_codebase=codebase,
                 llm_manager=llm_manager,
                 program_database=database,

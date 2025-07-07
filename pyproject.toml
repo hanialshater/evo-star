@@ -17,6 +17,7 @@ dependencies = [
     "pillow",
     "langgraph>=0.2.0",
     "langsmith>=0.1.0",
+    "aider-chat",
 ]
 
 [project.optional-dependencies]
@@ -51,6 +52,7 @@ dependencies = [
     "pillow",
     "langgraph>=0.2.0",
     "langsmith>=0.1.0",
+    "aider-chat",
 ]
 
 [tool.hatch.envs.type-check]
